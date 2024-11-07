@@ -8,10 +8,7 @@ import pytest
 import pytest_asyncio
 
 from llama_stack.distribution.datatypes import Api, Provider
-from llama_stack.providers.inline.safety.meta_reference import (
-    LlamaGuardShieldConfig,
-    SafetyConfig,
-)
+from llama_stack.providers.inline.safety.llama_guard import LlamaGuardConfig
 
 from llama_stack.providers.tests.resolver import resolve_impls_for_test_v2
 
@@ -31,23 +28,19 @@ def safety_model(request):
 
 
 @pytest.fixture(scope="session")
-def safety_meta_reference(safety_model) -> ProviderFixture:
+def safety_llama_guard(safety_model) -> ProviderFixture:
     return ProviderFixture(
         providers=[
             Provider(
-                provider_id="meta-reference",
-                provider_type="meta-reference",
-                config=SafetyConfig(
-                    llama_guard_shield=LlamaGuardShieldConfig(
-                        model=safety_model,
-                    ),
-                ).model_dump(),
+                provider_id="inline::llama-guard",
+                provider_type="inline::llama-guard",
+                config=LlamaGuardConfig(model=safety_model).model_dump(),
             )
         ],
     )
 
 
-SAFETY_FIXTURES = ["meta_reference", "remote"]
+SAFETY_FIXTURES = ["llama_guard", "remote"]
 
 
 @pytest_asyncio.fixture(scope="session")

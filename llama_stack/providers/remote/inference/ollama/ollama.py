@@ -79,6 +79,7 @@ class OllamaInferenceAdapter(Inference, ModelsProtocolPrivate):
                 continue
 
             llama_model = ollama_to_llama[r["model"]]
+            print(f"Found model {llama_model} in Ollama")
             ret.append(
                 ModelDef(
                     identifier=llama_model,
