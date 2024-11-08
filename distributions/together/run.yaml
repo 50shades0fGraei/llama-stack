@@ -1,40 +1,40 @@
 version: '2'
-built_at: '2024-10-08T17:40:45.325529'
+built_at: '2024-11-08T12:00:30.092767'
 image_name: together
 docker_image: null
 conda_env: together
 apis:
-- shields
-- agents
-- models
-- memory
-- memory_banks
 - inference
+- memory
 - safety
+- agents
+- telemetry
 providers:
   inference:
-  - provider_id: together0
+  - provider_id: remote::together-0
     provider_type: remote::together
     config:
       url: https://api.together.xyz/v1
-      # api_key: <ENTER_YOUR_API_KEY>
-  safety:
-  - provider_id: meta0
+      api_key: null
+  memory:
+  - provider_id: meta-reference-0
     provider_type: meta-reference
     config:
-      llama_guard_shield:
-        model: Llama-Guard-3-1B
-        excluded_categories: []
-        disable_input_check: false
-        disable_output_check: false
-      prompt_guard_shield:
-        model: Prompt-Guard-86M
-  memory:
-  - provider_id: meta0
+      kvstore:
+        namespace: null
+        type: sqlite
+        db_path: ~/.llama/runtime/faiss_store.db
+  - provider_id: remote::weaviate-1
     provider_type: remote::weaviate
     config: {}
+  safety:
+  - provider_id: meta-reference-0
+    provider_type: meta-reference
+    config:
+      llama_guard_shield: null
+      enable_prompt_guard: false
   agents:
-  - provider_id: meta0
+  - provider_id: meta-reference-0
     provider_type: meta-reference
     config:
       persistence_store:
@@ -42,6 +42,7 @@ providers:
         type: sqlite
         db_path: ~/.llama/runtime/kvstore.db
   telemetry:
-  - provider_id: meta0
+  - provider_id: meta-reference-0
     provider_type: meta-reference
     config: {}
+metadata_store: null
