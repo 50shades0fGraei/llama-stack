@@ -9,6 +9,7 @@ import functools
 import inspect
 import json
 import signal
+import sys
 import traceback
 
 from contextlib import asynccontextmanager
@@ -41,7 +42,7 @@ from llama_stack.providers.utils.telemetry.tracing import (
 )
 from llama_stack.distribution.datatypes import *  # noqa: F403
 from llama_stack.distribution.request_headers import set_request_provider_data
-from llama_stack.distribution.resolver import resolve_impls
+from llama_stack.distribution.resolver import InvalidProviderError, resolve_impls
 from llama_stack.distribution.store import CachedDiskDistributionRegistry
 from llama_stack.providers.utils.kvstore import kvstore_impl, SqliteKVStoreConfig
 
@@ -297,7 +298,13 @@ def main(
 
     dist_registry = CachedDiskDistributionRegistry(dist_kvstore)
 
-    impls = asyncio.run(resolve_impls(config, get_provider_registry(), dist_registry))
+    try:
+        impls = asyncio.run(
+            resolve_impls(config, get_provider_registry(), dist_registry)
+        )
+    except InvalidProviderError:
+        sys.exit(1)
+
     if Api.telemetry in impls:
         setup_logger(impls[Api.telemetry])
 
